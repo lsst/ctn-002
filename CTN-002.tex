@@ -1,9 +1,17 @@
+
 \documentclass[OPS,lsstdraft,authoryear,toc]{lsstdoc}
 \input{meta}
 
 % Package imports go here.
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}	% Including figure files
+\usepackage{csquotes}
 
 % Local commands go here.
+\newcommand{\eq}[1]{\begin{equation}#1\end{equation}}
+\newcommand{\ead}[1]{\begin{aligned}#1\end{aligned}} 
+
 
 %If you want glossaries
 %\input{aglossary.tex}
@@ -88,11 +96,11 @@ then append the end measurement (actionDuration, endPosition) as the last pair o
 Finally, the start position is subtracted from or subtracts the displacement $s$ depending on motion direction, and normalized by 750mm:
 \eq{
 	s \to 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			(s - \mathrm{startPosition})/750 \mathrm{mm} &, & \mathrm{endPosition} > \mathrm{startPosition}  \\
 			(\mathrm{startPosition} - s)/750 \mathrm{mm} &, & \mathrm{endPosition} < \mathrm{startPosition}.  \\
 }
-\ri.
+\right.
 }
 In this set-up, the model always takes $t \approx [0,1]$ and maps to $s \approx [0,1]$, simplifying the fitting procedure. After the fitting, model parameters are scaled up to recover their physical units, with time parameters ($t_0, t_1, t_2$) multiplied by actionDuration, and jerk parameters ($j_0, j_1, j_2$) multiplied by $750 \cdot \mathrm{actionDuration}^{-3}$.
 
@@ -121,32 +129,32 @@ In summary, the three jerks model has 6 parameters:
 With patience, one can work out the math of the model:
 \eq{
 	j(t) = 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			j_0 &,& 0 < t < t_1 \\
 			j_1 &,& t_1 < t < t_2 \\
 			j_2 &,& t_2 < t < T,
 }
-\ri.
+\right.
 }
 
 \eq{
 	a(t) = 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			j_0 t &,& 0 < t < t_1 \\
 			a_1 + j_1 (t - t_1) &,& t_1 < t < t_2 \\
 			a_2 + j_2 (t - t_2) &,& t_2 < t < T,
 }
-\ri.
+\right.
 }
 where $a_1 = a(t_1) = j_0 t_1$, and $a_2 = a(t_2) = a_1 + j_1 (t_2 - t_1) = j_0 t_1 + j_1 (t_2 - t_1).$ Re-organizing the terms, 
 \eq{
 	a(t) = 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			j_0 t &,& 0 < t < t_1 \\
 			A_1 + j_1 t &,& t_1 < t < t_2 \\
 			A_2 + j_2 t &,& t_2 < t < T,
 }
-\ri.
+\right.
 }
 where
 \eq{ \ead{
@@ -156,12 +164,12 @@ where
 Integrating for velocity:
 \eq{
 	v(t) = 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			\frac{1}{2}j_0t^2 &,& 0 < t < t_1 \\
 			\frac{1}{2}j_1 t^2 + A_1 t + V_1 &,& t_1 < t < t_2 \\
 			 \frac{1}{2}j_2 t^2 + A_2 t + V_2 &,& t_2 < t < T,
 }
-\ri.
+\right.
 }
 where
 \eq{ \ead{
@@ -171,12 +179,12 @@ where
 Finally, 
 \eq{
 	s(t) = 
-	\lf\{ \ead{ 
+	\left\{ \ead{ 
 			\frac{1}{6}j_0t^3 &,& 0 < t < t_1 \\
 			\frac{1}{6}j_1 t^3 + \frac{1}{2}A_1 t^2 + V_1 t + S_1 &,& t_1 < t < t_2 \\
 			 \frac{1}{6}j_2 t^3 + \frac{1}{2}A_2 t^2 + V_2 t + S_2 &,& t_2 < t < T,
 }
-\ri.
+\right.
 }
 with
 \eq{ \ead{
