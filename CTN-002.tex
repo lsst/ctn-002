@@ -85,7 +85,7 @@ Some related meta information can be found in each file:
 In addition, two sets of measurement of the shutter motion (time and position) are included: encodeSamples and hallTransitions, as well as the fitted motion parameters: motorEncoderFit and hallSensorFit.  The following sections explain the fitting model in detail.
 
 \section{Preparing for Fitting}
-Both the motor encoder and the Hall sensors measure time stamps with tai or mjd.  We first subtract the startTime to get a relative timing,
+Both the motor encoder and the Hall sensors measure time stamps in tai timescale and provided in both ISO and MJD format.  We first subtract the startTime to get a relative timing,
 \begin{equation}
     t \to t - \mathrm{starTime},
 \end{equation}
