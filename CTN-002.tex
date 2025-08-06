@@ -1,5 +1,5 @@
 
-\documentclass[OPS,lsstdraft,authoryear,toc]{lsstdoc}
+\documentclass[CTN,lsstdraft,authoryear,toc]{lsstdoc}
 \input{meta}
 
 % Package imports go here.
@@ -10,7 +10,7 @@
 
 % Local commands go here.
 \newcommand{\eq}[1]{\begin{equation}#1\end{equation}}
-\newcommand{\ead}[1]{\begin{aligned}#1\end{aligned}} 
+\newcommand{\ead}[1]{\begin{aligned}#1\end{aligned}}
 
 
 %If you want glossaries
@@ -30,9 +30,7 @@
 % Optional subtitle
 % \setDocSubtitle{A subtitle}
 
-\author{%
-Shuang Liang, Tony Johnson, Andy Rasmussen, Yousuke Utsumi, Aaron Roodman
-}
+\input{authors}
 
 \setDocRef{CTN-002}
 \setDocUpstreamLocation{\url{https://github.com/lsst/ctn-002}}
@@ -43,7 +41,7 @@ Shuang Liang, Tony Johnson, Andy Rasmussen, Yousuke Utsumi, Aaron Roodman
 % \setDocCurator{The Curator of this Document}
 
 \setDocAbstract{%
-Profile fitting for camera shutter trajectory and timing analysis
+Profile fitting for camera shutter trajectory and timing analysis.
 }
 
 % Change history defined here.
@@ -63,13 +61,13 @@ Profile fitting for camera shutter trajectory and timing analysis
 % use \mkshorttitle to remove the extra pages
 
 \section{Data Structure}
-The shutter motion profiles are located at 
+The shutter motion profiles are located at
 \begin{displayquote}
 lsstcam-dc01.cp.lsst.org:/data/ccs-ipa-data/OBS\_DAY/SEQ\_NUM/
 \end{displayquote}
 and for each sequence number there're two motion profiles:
 \begin{displayquote}
-SEQ\_NUM\_shutterMotionProfileOpen.json, and  \\ SEQ\_NUM\_shutterMotionProfileClose.json. 
+SEQ\_NUM\_shutterMotionProfileOpen.json, and  \\ SEQ\_NUM\_shutterMotionProfileClose.json.
 \end{displayquote}
 As the names suggest, each file corresponds to an open/close motion of one of the two shutter blades: PLUSX and MINUSX.
 Some related meta information can be found in each file:
@@ -85,7 +83,7 @@ Some related meta information can be found in each file:
 In addition, two sets of measurement of the shutter motion (time and position) are included: encodeSamples and hallTransitions, as well as the fitted motion parameters: motorEncoderFit and hallSensorFit.  The following sections explain the fitting model in detail.
 
 \section{Preparing for Fitting}
-Both the motor encoder and the Hall sensors measure time stamps in tai timescale and provided in both ISO and MJD format.  We first subtract the startTime to get a relative timing,
+Both the motor encoder and the Hall sensors measure time stamps in TAI timescale and provided in both ISO and MJD format.  We first subtract the startTime to get a relative timing,
 \begin{equation}
     t \to t - \mathrm{starTime},
 \end{equation}
@@ -95,8 +93,8 @@ then append the end measurement (actionDuration, endPosition) as the last pair o
 }
 Finally, the start position is subtracted from or subtracts the displacement $s$ depending on motion direction, and normalized by 750mm:
 \eq{
-	s \to 
-	\left\{ \ead{ 
+	s \to
+	\left\{ \ead{
 			(s - \mathrm{startPosition})/750 \mathrm{mm} &, & \mathrm{endPosition} > \mathrm{startPosition}  \\
 			(\mathrm{startPosition} - s)/750 \mathrm{mm} &, & \mathrm{endPosition} < \mathrm{startPosition}.  \\
 }
@@ -105,7 +103,7 @@ Finally, the start position is subtracted from or subtracts the displacement $s$
 In this set-up, the model always takes $t \approx [0,1]$ and maps to $s \approx [0,1]$, simplifying the fitting procedure. After the fitting, model parameters are scaled up to recover their physical units, with time parameters ($t_0, t_1, t_2$) multiplied by actionDuration, and jerk parameters ($j_0, j_1, j_2$) multiplied by $750 \cdot \mathrm{actionDuration}^{-3}$.
 
 \section{Three Jerks Model v1}
-The shutter motion profile is a piecewise constant jerk motion, as shown in Figure~\ref{fig:demo}. 
+The shutter motion profile is a piecewise constant jerk motion, as shown in Figure~\ref{fig:demo}.
 \begin{figure*}
 	\centering
         \includegraphics[width=0.99\hsize]{./figs/demo.png}
@@ -128,8 +126,8 @@ In summary, the three jerks model has 6 parameters:
 \end{itemize}
 With patience, one can work out the math of the model:
 \eq{
-	j(t) = 
-	\left\{ \ead{ 
+	j(t) =
+	\left\{ \ead{
 			j_0 &,& 0 < t < t_1 \\
 			j_1 &,& t_1 < t < t_2 \\
 			j_2 &,& t_2 < t < T,
@@ -138,18 +136,18 @@ With patience, one can work out the math of the model:
 }
 
 \eq{
-	a(t) = 
-	\left\{ \ead{ 
+	a(t) =
+	\left\{ \ead{
 			j_0 t &,& 0 < t < t_1 \\
 			a_1 + j_1 (t - t_1) &,& t_1 < t < t_2 \\
 			a_2 + j_2 (t - t_2) &,& t_2 < t < T,
 }
 \right.
 }
-where $a_1 = a(t_1) = j_0 t_1$, and $a_2 = a(t_2) = a_1 + j_1 (t_2 - t_1) = j_0 t_1 + j_1 (t_2 - t_1).$ Re-organizing the terms, 
+where $a_1 = a(t_1) = j_0 t_1$, and $a_2 = a(t_2) = a_1 + j_1 (t_2 - t_1) = j_0 t_1 + j_1 (t_2 - t_1).$ Re-organizing the terms,
 \eq{
-	a(t) = 
-	\left\{ \ead{ 
+	a(t) =
+	\left\{ \ead{
 			j_0 t &,& 0 < t < t_1 \\
 			A_1 + j_1 t &,& t_1 < t < t_2 \\
 			A_2 + j_2 t &,& t_2 < t < T,
@@ -163,8 +161,8 @@ where
 }}
 Integrating for velocity:
 \eq{
-	v(t) = 
-	\left\{ \ead{ 
+	v(t) =
+	\left\{ \ead{
 			\frac{1}{2}j_0t^2 &,& 0 < t < t_1 \\
 			\frac{1}{2}j_1 t^2 + A_1 t + V_1 &,& t_1 < t < t_2 \\
 			 \frac{1}{2}j_2 t^2 + A_2 t + V_2 &,& t_2 < t < T,
@@ -176,10 +174,10 @@ where
     V_1 & = \frac{1}{2} (j_0 - j_1) t_1^2 - A_1 t_1, \\
     V_2 & = \frac{1}{2} (j_1 - j_2) t_2^2 + (A_1 - A_2) t_2 + V1.
 }}
-Finally, 
+Finally,
 \eq{
-	s(t) = 
-	\left\{ \ead{ 
+	s(t) =
+	\left\{ \ead{
 			\frac{1}{6}j_0t^3 &,& 0 < t < t_1 \\
 			\frac{1}{6}j_1 t^3 + \frac{1}{2}A_1 t^2 + V_1 t + S_1 &,& t_1 < t < t_2 \\
 			 \frac{1}{6}j_2 t^3 + \frac{1}{2}A_2 t^2 + V_2 t + S_2 &,& t_2 < t < T,
