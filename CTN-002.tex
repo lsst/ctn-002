@@ -194,7 +194,13 @@ with
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Plotting Model with Data}
-The fitted parameters are scaled back to physical units and reported in the shutter motion files. Only 5 parameters (except $t_0$) are needed to calculate the model prediction. To compare the model with data, subtract both startTime and $t_0$ from the time stamps. The model position also needs to subtract startPosition if moving towards the positive direction (startPosition $<$ endPosition), or be subtracted by startPosition otherwise.
+The fitted parameters are scaled back to physical units and reported in the shutter motion files. Only 5 parameters (except $t_0$) are needed to calculate the model prediction. To compare the model with data, 
+\begin{itemize}
+    \item[1] subtract both startTime and $t_0$ from the data time stamps.
+    \item[2] \textbf{add} startPosition to the model position if moving towards the positive direction (startPosition $<$ endPosition), or
+    \item[3] subtract the model position \textbf{from} startPosition if moving towards the negative direction (startPosition $>$ endPosition).
+\end{itemize}
+
 
 \section{Finding Midpoint of Motion}
 Two estimates of the mid-point of motion are calculated. One is the time when the velocity is at its maximum (i.e. when the acceleration is zero). It is found by solving
