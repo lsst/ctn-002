@@ -85,7 +85,7 @@ In addition, two sets of measurement of the shutter motion (time and position) a
 \section{Preparing for Fitting}
 Both the motor encoder and the Hall sensors measure time stamps in TAI timescale and provided in both ISO and MJD format.  We first subtract the startTime to get a relative timing,
 \begin{equation}
-    t \to t - \mathrm{starTime},
+    t \to t - \mathrm{startTime},
 \end{equation}
 then append the end measurement (actionDuration, endPosition) as the last pair of the motion data ($t, s$). Next we normalize the time stamps by duration:
 \eq{
